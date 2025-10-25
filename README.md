@@ -341,6 +341,59 @@ Create beautiful status pages for your users:
 - Multiple languages
 - Maintenance scheduling
 
+## 🐳 Docker Deployment
+
+### Standard Docker Image
+The official Uptime Kuma Docker image is available on Docker Hub:
+
+```bash
+# Pull the latest image
+docker pull louislam/uptime-kuma:1
+
+# Run with basic configuration
+docker run -d \
+  --name uptime-kuma \
+  -p 3001:3001 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v uptime-kuma-data:/app/data \
+  louislam/uptime-kuma:1
+```
+
+### Secure Docker Image (Recommended)
+This repository includes a security-enhanced Docker image with reduced vulnerabilities:
+
+```bash
+# Build the secure image from this repository
+docker build -f dockerfile_secure -t uptime-kuma:secure .
+
+# Run the secure image
+docker run -d \
+  --name uptime-kuma \
+  -p 3001:3001 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v uptime-kuma-data:/app/data \
+  uptime-kuma:secure
+```
+
+For more information about the secure Docker image, see [DOCKER_README.md](DOCKER_README.md).
+
+### Docker Compose
+```yaml
+version: "3.3"
+services:
+  uptime-kuma:
+    image: uptime-kuma:secure  # or louislam/uptime-kuma:1 for official
+    container_name: uptime-kuma
+    restart: always
+    ports:
+      - "3001:3001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - uptime-kuma-data:/app/data
+    environment:
+      - NODE_ENV=production
+```
+
 ## 🤖 API
 
 Uptime Kuma provides a comprehensive API for programmatic access:
