@@ -360,8 +360,9 @@ docker run -d \
 ```
 
 ### Secure Docker Image (Recommended)
-This repository includes a security-enhanced Docker image with reduced vulnerabilities:
+This repository includes multiple security-enhanced Docker images with reduced vulnerabilities:
 
+#### Option 1: Basic Secure Image
 ```bash
 # Build the secure image from this repository
 docker build -f dockerfile_secure -t uptime-kuma:secure .
@@ -375,7 +376,23 @@ docker run -d \
   uptime-kuma:secure
 ```
 
-For more information about the secure Docker image, see [DOCKER_README.md](DOCKER_README.md).
+#### Option 2: Maximum Security Image
+```bash
+# Build the maximum security image with all security enhancements
+docker build -f Dockerfile.security -t uptime-kuma:max-secure .
+
+# Run the maximum security image
+docker run -d \
+  --name uptime-kuma \
+  -p 3001:3001 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v uptime-kuma-data:/app/data \
+  uptime-kuma:max-secure
+```
+
+### Building and Pushing to Docker Hub
+
+For instructions on building and pushing these security-enhanced images to Docker Hub, see [DOCKER_HUB.md](DOCKER_HUB.md).
 
 ### Docker Compose
 ```yaml
