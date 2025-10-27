@@ -6,6 +6,7 @@ const path = require("path");
 const Database = require("./database");
 const { allowDevAllOrigin } = require("./util-server");
 const mysql = require("mysql2/promise");
+const rateLimit = require("express-rate-limit");
 
 /**
  *  A standalone express app that is used to setup a database
@@ -137,7 +138,16 @@ class SetupDatabase {
                 });
             });
 
-            app.post("/setup-database", async (request, response) => {
+            // Rate limiter for setup-database to prevent abuse
+            const setupDatabaseLimiter = rateLimit({
+                windowMs: 15 * 60 * 1000, // 15 minutes
+                max: 5, // limit each IP to 5 requests per windowMs
+                standardHeaders: true,
+                legacyHeaders: false,
+                message: "Too many setup attempts from this IP, please try again later."
+            });
+
+            app.post("/setup-database", setupDatabaseLimiter, async (request, response) => {
                 allowDevAllOrigin(response);
 
                 if (this.runningSetup) {
